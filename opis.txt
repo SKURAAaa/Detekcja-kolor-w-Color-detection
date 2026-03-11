@@ -1,0 +1,13 @@
+W programie zastosowano segmentację koloru czerwonego w przestrzeni barw HSV (Hue, Saturation, Value),
+ponieważ pozwala ona łatwiej odseparować kolor od jasności obrazu niż przestrzeń RGB.
+Najpierw każda klatka wideo jest konwertowana z przestrzeni BGR do HSV przy użyciu funkcji cv2.cvtColor.
+Następnie wykonywane jest progowanie koloru czerwonego za pomocą funkcji cv2.inRange.
+Ponieważ czerwony kolor znajduje się na początku i końcu skali Hue, zastosowano dwa zakresy progowania: [0, 140, 70] – [10, 255, 255] oraz [160, 140, 70] – [180, 255, 255].
+Otrzymane maski są następnie łączone operacją bitwise_or, co pozwala uzyskać końcową maskę segmentacji obiektu.
+
+Aby usunąć zakłócenia z maski segmentacji zastosowano operacje morfologiczne.
+Najpierw użyto operacji opening (cv2.MORPH_OPEN) z jądrem o rozmiarze 5x5, która usuwa małe szumy i pojedyncze piksele.
+Następnie zastosowano operację closing (cv2.MORPH_CLOSE), która wypełnia niewielkie dziury w wykrytym obiekcie.
+Dzięki temu maska jest bardziej stabilna i pozwala poprawnie wyznaczyć kontur czerwonego obiektu.
+Na podstawie największego konturu obliczane są momenty geometryczne w celu wyznaczenia środka obiektu,
+a następnie rysowane jest minimalne koło otaczające obiekt oraz obliczane jest jego odchylenie od środka kadru.
